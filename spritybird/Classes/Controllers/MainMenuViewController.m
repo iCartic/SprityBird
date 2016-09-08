@@ -10,6 +10,8 @@
 #import "Score.h"
 #import "GameViewController.h"
 
+#import <Skillz/Skillz.h>
+
 
 @interface MainMenuViewController ()
 @property (weak, nonatomic) IBOutlet UIView* rootView;
@@ -22,8 +24,28 @@
     return YES;
 }
 
-- (void)playButton:(id)sender
+#pragma mark - Skillz SDK Delegate implementation
+
+- (IBAction)launchSkillz:(id)sender
 {
+    [[Skillz skillzInstance] launchSkillz];
+}
+
+- (void)tournamentWillBegin:(NSDictionary *)gameParameters
+              withMatchInfo:(SKZMatchInfo *)matchInfo
+{
+    NSLog(@"Test Match Info matchId:%ld description:%@ entryCash:%@ entryPoints:%@ isCash:%d name:%@ templateId:%@",
+          matchInfo.id,
+          matchInfo.matchDescription,
+          matchInfo.entryCash,
+          matchInfo.entryPoints,
+          matchInfo.isCash,
+          matchInfo.name,
+          matchInfo.templateId);
+    
+    SKZPlayer *player = matchInfo.player;
+    NSLog(@"TestPlayer %@ %@ %@ %@", player.id, player.displayName, player.flagURL, player.avatarURL);
+    
     UIStoryboard *storyboard;
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
         storyboard = [UIStoryboard storyboardWithName:@"Main-iPad" bundle:nil];
@@ -33,9 +55,25 @@
     
     GameViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:@"GameViewController"];
     [self presentViewController:viewController animated:YES completion:^{
-        NSLog(@"heyyy start game");
         [viewController startGame];
     }];
 }
+
+- (SkillzOrientation)preferredSkillzInterfaceOrientation
+{
+    return SkillzPortrait;
+}
+
+- (void)skillzWillExit
+{
+    NSLog(@"Skillz is exiting");
+}
+
+- (void)skillzHasFinishedLaunching
+{
+    NSLog(@"Skillz has launched");
+    
+}
+#pragma mark - End Delegate implementation
 
 @end

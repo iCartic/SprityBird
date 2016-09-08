@@ -10,7 +10,7 @@
 #import "SKScrollingNode.h"
 #import "BirdNode.h"
 #import "Score.h"
-
+#import <Skillz/Skillz.h>
 
 #define BACK_SCROLLING_SPEED .5
 #define FLOOR_SCROLLING_SPEED 3
@@ -37,13 +37,19 @@ static bool wasted = NO;
 - (id)initWithSize:(CGSize)size {
     if (self = [super initWithSize:size]) {
         self.physicsWorld.contactDelegate = self;
-        [self startGame];
     }
     return self;
 }
 
 - (void) startGame
 {
+    SKZPlayer *player = [Skillz player];
+    if (player) {
+        NSLog(@"TestPlayer %@ %@ %@ %@", player.id, player.displayName, player.flagURL, player.avatarURL);
+    } else {
+        NSLog(@"TestPlayer nil");
+    }
+    
     // Reinit
     wasted = NO;
     
@@ -139,11 +145,14 @@ static bool wasted = NO;
     
 }
 
-#pragma mark - Interaction 
+#pragma mark - Interaction
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     if (wasted) {
-        [(UIViewController *)self.sceneDelegate dismissViewControllerAnimated:NO completion:nil];
+        [(UIViewController *)self.sceneDelegate dismissViewControllerAnimated:NO completion:^{
+            [[Skillz skillzInstance] displayTournamentResultsWithScore:@(self.score)
+                                                        withCompletion:nil];
+        }];
         return;
     }
     
@@ -235,6 +244,13 @@ static bool wasted = NO;
            X(topPipe) + WIDTH(topPipe)/2 < bird.position.x + FLOOR_SCROLLING_SPEED){
             self.score +=1;
             
+            // if in a skillz game
+            if ([[Skillz skillzInstance] tournamentIsInProgress]) {
+                // report the current score as a heartbeat
+                NSLog(@"Heartbeating to Skillz");
+                [[Skillz skillzInstance] updatePlayersCurrentScore:@(self.score)];
+            }
+            
             scoreLabel.text = [NSString stringWithFormat:@"%lu",self.score];
             if(self.score>=10){
                 scoreLabel.fontSize = 340;
@@ -249,10 +265,10 @@ static bool wasted = NO;
 - (void)didBeginContact:(SKPhysicsContact *)contact
 {
     if(wasted){ return; }
-
+    
     wasted = true;
     [Score registerScore:self.score];
-
+    
     if([self.sceneDelegate respondsToSelector:@selector(eventWasted)]){
         [self.sceneDelegate eventWasted];
     }

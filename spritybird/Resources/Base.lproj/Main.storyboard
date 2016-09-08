@@ -40,7 +40,7 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="playButton:" destination="LVy-Xm-G1j" eventType="touchUpInside" id="iee-7a-hWB"/>
+                                    <action selector="launchSkillz:" destination="LVy-Xm-G1j" eventType="touchUpInside" id="EbO-Xf-KGC"/>
                                 </connections>
                             </button>
                         </subviews>

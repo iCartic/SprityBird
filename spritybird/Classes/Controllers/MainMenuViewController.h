@@ -7,8 +7,9 @@
 //
 
 #import "Scene.h"
+#import <Skillz/Skillz.h>
 
-@interface MainMenuViewController : UIViewController <SceneDelegate>
+@interface MainMenuViewController : UIViewController <SceneDelegate, SkillzBaseDelegate>
 
 - (IBAction)playButton:(id)sender;
 

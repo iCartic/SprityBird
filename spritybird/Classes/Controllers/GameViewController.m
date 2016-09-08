@@ -9,6 +9,7 @@
 #import "GameViewController.h"
 #import "Scene.h"
 #import "Score.h"
+#import <Skillz/Skillz.h>
 
 @interface GameViewController ()
 @property (weak,nonatomic) IBOutlet SKView * gameView;
@@ -70,7 +71,7 @@
         self.getReadyView.alpha = 1;
     } completion:^(BOOL finished) {
         [flash removeFromSuperview];
-
+        
     }];
 }
 
