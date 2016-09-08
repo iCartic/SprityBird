@@ -7,6 +7,7 @@
 //
 
 #import "Math.h"
+#import <Skillz/Skillz.h>
 
 static unsigned int _seed = 0;
 
@@ -20,7 +21,12 @@ static unsigned int _seed = 0;
 
 + (float) randomFloatBetween:(int) min and:(int) max
 {
-    return ((rand()%RAND_MAX)/(RAND_MAX*1.0))*(max-min)+min;
-}
+    if ([[Skillz skillzInstance] tournamentIsInProgress]) {
+        // Use the Skillz random number generator to ensure that players
+        // competing against each other have the same experiance
+        return [Skillz getRandomNumberWithMin:0 andMax:max] * 1.0;
+    } else {
+        return ((rand()%RAND_MAX)/(RAND_MAX*1.0))*(max-min)+min;
+    }}
 
 @end
